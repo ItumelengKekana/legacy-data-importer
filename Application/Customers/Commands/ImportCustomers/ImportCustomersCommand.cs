@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Customers;
 using Domain.Imports;
+using Mediator;
 
 namespace Application.Customers.Commands.ImportCustomers;
 

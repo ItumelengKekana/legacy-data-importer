@@ -10,7 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ImportLog> ImportLogs => Set<ImportLog>();
     public DbSet<ImportError> ImportErrors => Set<ImportError>();
 
-    protected override OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Customer>()
             .HasIndex(c => c.LegacyCustomerId)
