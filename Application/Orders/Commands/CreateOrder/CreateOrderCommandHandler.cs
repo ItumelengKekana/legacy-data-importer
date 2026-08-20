@@ -79,10 +79,9 @@ public class CreateOrderCommandHandler(
             Sku = item.Sku,
             UnitPrice = (decimal)item.UnitPrice,
             Quantity = item.Quantity
-        });
+        }).ToList();
 
         await orderRepository.AddOrderAsync(order, items, cancellationToken);
-        await orderRepository.SaveChangesAsync(cancellationToken);
 
         return new CreateOrderResponse(true, $"Order {order.Id} was created successfully.");
     }
