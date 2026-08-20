@@ -15,7 +15,8 @@ public class ImportCustomersCommandHandler(
 		var log = new ImportLog();
 		await logRepository.AddAsync(log, ct);
 
-		await foreach (var (lineNumber, rawLine, parsed, error) in parser.ParseStreamAsync(command.FileStream, ct))
+		using var stream = command.File.OpenReadStream();
+		await foreach (var (lineNumber, rawLine, parsed, error) in parser.ParseStreamAsync(stream, ct))
 		{
 			if (error != null || parsed == null)
 			{
