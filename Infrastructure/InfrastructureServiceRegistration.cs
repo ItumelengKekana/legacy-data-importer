@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Customers;
 using Domain.Imports;
+using Domain.Orders;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
 using Infrastructure.Services;
@@ -22,6 +23,7 @@ public static class InfrastructureServiceRegistration
 
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IImportLogRepository, ImportLogRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
 
         services.AddTransient<IFileParser, FileParser>();
 

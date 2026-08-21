@@ -25,16 +25,10 @@ public class ImportLog
     {
         TotalProcessed++;
         FailedCount++;
-        _errors.Add(new ImportError(lineNumber, rawLine, reason));
+        _errors.Add(new ImportError(0, lineNumber, rawLine, reason));
     }
 
     public void Complete() => CompletedAt = DateTime.UtcNow;
 }
 
-public class ImportError(int lineNumber, string rawLine, string reason)
-{
-    public int Id { get; private set; }
-    public int LineNumber { get; } = lineNumber;
-    public string RawLine { get; } = rawLine.Length > 200 ? rawLine[..200] : rawLine;
-    public string Reason { get; } = reason;
-}
+public record ImportError(int Id, int lineNumber, string rawLine, string reason);
