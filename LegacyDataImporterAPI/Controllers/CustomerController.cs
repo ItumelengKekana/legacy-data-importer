@@ -15,7 +15,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
-    [HttpPost("import")]
+    [HttpPost("import-legacy-data")]
     [Consumes("multipart/form-data")]
     [ProducesResponseType(typeof(ImportSummaryDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -34,7 +34,7 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost]
+    [HttpPost("create-order")]
     [ProducesResponseType(typeof(CreateOrderResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(CreateOrderResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateOrder([FromBody][Required] CreateOrderCommand command, CancellationToken ct)
@@ -49,25 +49,32 @@ public class CustomerController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("GetOrderById")]
     [ProducesResponseType(typeof(OrderDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetOrderById([FromRoute][Required] int id, CancellationToken ct)
+    public async Task<IActionResult> GetOrderById([Required] int id, CancellationToken ct)
     {
         var order = await _mediator.Send(new GetOrderByIdQuery(id), ct);
-        return order is not null ? Ok(order) : NotFound();
+        return order != null ? Ok(order) : NotFound();
     }
 
     [HttpGet("order-summary")]
     [ProducesResponseType(typeof(List<CustomerOrderSummaryDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOrderSummaries(
-        [FromQuery][Required] DateTime fromDate,
-        [FromQuery][Required] DateTime toDate,
+        [FromQuery][Required] string fromDate,
+        [FromQuery][Required] string toDate,
         CancellationToken ct)
     {
         var query = new GetCustomerOrderSummaryQuery(fromDate, toDate);
         var result = await _mediator.Send(query, ct);
+
+        //if (result.Count == 0)
+        //{
+        //    return NotFound("No orders found for the specified date range.");
+        //}
+
         return Ok(result);
     }
 

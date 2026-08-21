@@ -1,4 +1,5 @@
-﻿using Domain.Orders;
+﻿using Application.Common.Exceptions;
+using Domain.Orders;
 using Mediator;
 
 namespace Application.Orders.Queries.GetOrderById;
@@ -8,12 +9,41 @@ public class GetOrderByIdQueryHandler(IOrderRepository orderRepository)
 {
     public async ValueTask<OrderDetailsDto?> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        var result = await orderRepository.GetOrderDetailsByIdAsync(request.Id, cancellationToken);
+        var validator = new GetOrderByIdQueryValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-        if (result is null)
+        if (validationResult.Errors.Count != 0)
         {
-            return null;
+            List<string> messages = [];
+            List<string> names = [];
+            var paramExists = false;
+
+            foreach (var item in validationResult.Errors)
+            {
+                messages.Add(item.ErrorMessage);
+
+                var _tag = item;
+                var name = _tag.PropertyName;
+
+                names.Add(name);
+            }
+
+            foreach (var item in names)
+            {
+                var check = messages.Any(x => x.Contains(item));
+                if (check)
+                {
+                    paramExists = true;
+                }
+            }
+
+            if (paramExists)
+            {
+                throw new BadRequestException(string.Join(", ", messages));
+            }
         }
+
+        var result = await orderRepository.GetOrderDetailsByIdAsync(request.Id, cancellationToken) ?? throw new NotFoundMessageException("No order was found for the specified Id");
 
         var items = result.Items.ConvertAll(item => new OrderItemDto(
             item.Id,

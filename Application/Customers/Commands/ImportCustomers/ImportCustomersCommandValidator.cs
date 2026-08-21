@@ -8,6 +8,6 @@ public class ImportCustomersCommandValidator : AbstractValidator<ImportCustomers
     {
         RuleFor(x => x.File)
             .NotNull().WithMessage("File is required.")
-            .NotEmpty().WithMessage("Please make sure the uploaded file is not empty");
+            .NotEmpty().WithMessage("Please make sure the uploaded File is not empty");
     }
 }

@@ -23,10 +23,10 @@ public class CreateOrderCommandHandler(
             {
                 messages.Add(item.ErrorMessage);
 
-                var _tag = item.FormattedMessagePlaceholderValues;
-                var name = _tag.FirstOrDefault(t => t.Key == "PropertyName");
+                var _tag = item;
+                var name = _tag.PropertyName;
 
-                names.Add(name.Value.ToString()!);
+                names.Add(name);
             }
 
             foreach (var item in names)

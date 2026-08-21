@@ -2,14 +2,14 @@
 
 public class Customer
 {
-    public int Id { get; private set; }
-    public string LegacyCustomerId { get; private set; } = string.Empty;
-    public string FullName { get; private set; } = string.Empty;
-    public string Email { get; private set; } = string.Empty;
-    public DateOnly SignupDate { get; private set; }
-    public Tier Tier { get; private set; }
+    public int Id { get; set; }
+    public string LegacyCustomerId { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public DateOnly SignupDate { get; set; }
+    public Tier Tier { get; set; }
 
-    private Customer() { }
+    public Customer() { }
 
     public Customer(string legacyCustomerId, string fullName, string email, DateOnly signupDate, Tier tier)
     {

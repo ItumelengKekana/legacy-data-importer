@@ -1,19 +1,54 @@
 ﻿using FluentValidation;
+using System.Globalization;
 
 namespace Application.Orders.Queries.GetCustomerOrderSummary;
 
 public class GetCustomerOrderSummaryQueryValidator : AbstractValidator<GetCustomerOrderSummaryQuery>
 {
+    private const string DateFormat = "yyyy-MM-dd";
+
     public GetCustomerOrderSummaryQueryValidator()
     {
-        RuleFor(x => x.FromDate)
+        RuleFor(x => x.StartDate)
             .NotEmpty()
-            .WithMessage("Start Date is required.");
+            .WithMessage("StartDate is required.")
+            .Matches(@"^\d{4}-\d{2}-\d{2}$")
+            .WithMessage($"StartDate must be in {DateFormat} format.")
+            .Custom(ValidateDateFormat);
 
-        RuleFor(x => x.ToDate)
+        RuleFor(x => x.EndDate)
             .NotEmpty()
-            .WithMessage("End Date is required.")
-            .GreaterThanOrEqualTo(x => x.FromDate)
-            .WithMessage("End Date must be greater than or equal to Start Date.");
+            .WithMessage("EndDate is required.")
+            .Matches(@"^\d{4}-\d{2}-\d{2}$")
+            .WithMessage($"EndDate must be in {DateFormat} format.")
+            .Custom(ValidateDateFormat);
+
+        // Compare parsed dates
+        RuleFor(x => x.StartDate)
+            .Custom((startDate, context) =>
+            {
+                var endDate = context.InstanceToValidate.EndDate;
+
+                if (DateTime.TryParseExact(startDate, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var start) &&
+                    DateTime.TryParseExact(endDate, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var end))
+                {
+                    if (start > end)
+                    {
+                        context.AddFailure("StartDate must be less than or equal to EndDate.");
+                    }
+                }
+            });
+    }
+
+    /// <summary>
+    /// Validates that a date string can be parsed in the required yyyy-MM-dd format.
+    /// </summary>
+    private void ValidateDateFormat(string dateString, ValidationContext<GetCustomerOrderSummaryQuery> context)
+    {
+        if (!DateTime.TryParseExact(dateString, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+        {
+            var fieldName = context.PropertyPath?.Contains("Start") ?? false ? "Start Date" : "End Date";
+            context.AddFailure($"{fieldName} must be a valid date in {DateFormat} format.");
+        }
     }
 }

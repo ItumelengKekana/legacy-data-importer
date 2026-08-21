@@ -3,6 +3,6 @@
 namespace Application.Orders.Queries.GetCustomerOrderSummary;
 
 public record GetCustomerOrderSummaryQuery(
-    DateTime FromDate,
-    DateTime ToDate
+    string StartDate,
+    string EndDate
 ) : IRequest<List<CustomerOrderSummaryDto>>;

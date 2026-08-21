@@ -14,31 +14,31 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
         When(x => x.CustomerId.HasValue, () =>
         {
             RuleFor(x => x.CustomerId!.Value)
-                .GreaterThan(0).WithMessage("CustomerId must be greater than 0.");
+                .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0.");
         });
 
         When(x => !string.IsNullOrWhiteSpace(x.LegacyCustomerId), () =>
         {
             RuleFor(x => x.LegacyCustomerId)
-                .MaximumLength(10).WithMessage("LegacyCustomerId cannot exceed 10 characters.");
+                .MaximumLength(10).WithMessage("{PropertyName} cannot exceed 10 characters.");
         });
 
         RuleFor(x => x.OrderDate)
-            .NotEmpty().WithMessage("Order date is required.");
+            .NotEmpty().WithMessage("{PropertyName} is required.");
 
         RuleFor(x => x.Currency)
-            .NotEmpty().WithMessage("Currency code is required.")
-            .Length(3).WithMessage("Currency code must be exactly 3 characters (e.g., USD, ZAR).");
+            .NotEmpty().WithMessage("{PropertyName} is required.")
+            .Length(3).WithMessage("{PropertyName} must be exactly 3 characters (e.g., USD, ZAR).");
 
         RuleFor(x => x.Status)
             .NotEmpty().WithMessage("Status is required.")
-            .MaximumLength(50).WithMessage("Status cannot exceed 50 characters.");
+            .MaximumLength(50).WithMessage("{PropertyName} cannot exceed 50 characters.");
 
         // Collection Rules
         RuleFor(x => x.Items)
-            .NotNull().WithMessage("Order items collection cannot be null.")
+            .NotNull().WithMessage("{PropertyName} collection cannot be null.")
             .Must(items => items?.Count > 0)
-            .WithMessage("An order must contain at least one item.");
+            .WithMessage("{PropertyName} must contain at least one item.");
 
         // Nested validation rule for every item in the list
         RuleForEach(x => x.Items)
@@ -51,17 +51,17 @@ public class CreateOrderItemDtoValidator : AbstractValidator<CreateOrderItemDto>
     public CreateOrderItemDtoValidator()
     {
         RuleFor(x => x.Description)
-            .NotEmpty().WithMessage("Description is required.")
+            .NotEmpty().WithMessage("{PropertyName} is required.")
             .MaximumLength(255).WithMessage("Description cannot exceed 255 characters.");
 
         RuleFor(x => x.Sku)
-            .NotEmpty().WithMessage("SKU is required.")
-            .MaximumLength(50).WithMessage("SKU cannot exceed 50 characters.");
+            .NotEmpty().WithMessage("{PropertyName} is required.")
+            .MaximumLength(50).WithMessage("{PropertyName} cannot exceed 50 characters.");
 
         RuleFor(x => x.UnitPrice)
-            .GreaterThan(0).WithMessage("UnitPrice must be greater than 0.");
+            .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0.");
 
         RuleFor(x => x.Quantity)
-            .GreaterThan(0).WithMessage("Quantity must be greater than 0.");
+            .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0.");
     }
 }

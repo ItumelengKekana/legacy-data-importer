@@ -8,6 +8,6 @@ public class GetOrderByIdQueryValidator : AbstractValidator<GetOrderByIdQuery>
     {
         RuleFor(x => x.Id)
             .GreaterThan(0)
-            .WithMessage("Order Id must be greater than 0.");
+            .WithMessage("Id must be greater than 0.");
     }
 }
